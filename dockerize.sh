@@ -1,0 +1,1 @@
+git pull && docker build -t ochre:latest . && docker compose up -d
