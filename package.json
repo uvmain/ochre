@@ -20,5 +20,8 @@
     "eslint": "^9.0.0",
     "nuxt": "^3.11.2",
     "nuxt-auth-utils": "^0.3.9"
+  },
+  "dependencies": {
+    "@recogito/annotorious": "^2.7.13"
   }
 }

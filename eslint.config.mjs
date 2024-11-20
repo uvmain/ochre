@@ -9,7 +9,8 @@ export default withNuxt(
       'brace-style': ['error', 'stroustrup'],
       'curly': ['off'],
       'vue/multi-word-component-names': 'off',
-      'vue/no-v-html': 'off'
+      'vue/no-v-html': 'off',
+      'vue/require-default-prop': 'off'
     }
   },
 )
