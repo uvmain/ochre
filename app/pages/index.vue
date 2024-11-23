@@ -1,44 +1,52 @@
 <script setup lang="ts">
 import '@recogito/annotorious/dist/annotorious.min.css'
+import { ref, onBeforeUnmount } from 'vue'
 
+const Anno = ref()
 const anno = ref<typeof import('@recogito/annotorious')>(null)
-const sourceImage = ref()
-const imageToRecognise = ref()
 
-async function handleImageChange(event: Event) {
-  anno.value?.destroy()
+const imageSource = useState<string>('imageSource')
+const imageToRecognise = useState<string>('imageToRecognise')
+const ocrText = useState<string>('ocrText')
 
-  const input = event.target as HTMLInputElement
-  if (input.files && input.files[0]) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      if (e.target && typeof e.target.result === 'string') {
-        sourceImage.value = e.target.result
-      }
-    }
-    reader.readAsDataURL(input.files[0])
+watch(imageSource, () => {
+  handleImageChange()
+})
+
+async function handleImageChange() {
+  await defineAnno()
+
+  if (anno.value) {
+    anno.value.destroy()
+    anno.value = null
   }
-  const Anno = await import('@recogito/annotorious')
-  anno.value = new Anno.Annotorious({
-    image: document.getElementById('text-img'),
-    disableEditor: true,
-  })
+  initializeAnnotorious()
+}
 
-  anno.value.on('createSelection', async (annotation: any) => {
-    const id = annotation.id
-    const snippetObject: { snippet: HTMLCanvasElement } = await anno.value.getImageSnippetById(id)
-    updateImageToRecognise(snippetObject)
-  })
-  anno.value.on('changeSelected', async (selected: any) => {
-    const id = selected.annotation.id
-    const snippetObject: { snippet: HTMLCanvasElement } = await anno.value.getImageSnippetById(id)
-    updateImageToRecognise(snippetObject)
-  })
-  anno.value.on('changeSelectionTarget', async (annotation: any) => {
-    const id = annotation.id
-    const snippetObject: { snippet: HTMLCanvasElement } = await anno.value.getImageSnippetById(id)
-    updateImageToRecognise(snippetObject)
-  })
+async function defineAnno() {
+  if (!Anno.value) {
+    Anno.value = await import('@recogito/annotorious')
+  }
+}
+
+async function initializeAnnotorious() {
+  await defineAnno()
+  if (imageSource.value && Anno.value) {
+    anno.value = new Anno.value.Annotorious({
+      image: document.getElementById('text-img') as HTMLImageElement,
+      disableEditor: true,
+    })
+
+    anno.value.on('createSelection', handleSelection)
+    anno.value.on('changeSelected', handleSelection)
+    anno.value.on('changeSelectionTarget', handleSelection)
+  }
+}
+
+async function handleSelection(annotation: { id: string | number }) {
+  const id = annotation.id
+  const snippetObject: { snippet: HTMLCanvasElement } = await anno.value.getImageSnippetById(id)
+  updateImageToRecognise(snippetObject)
 }
 
 function updateImageToRecognise(snippetObject: { snippet: HTMLCanvasElement }) {
@@ -52,31 +60,29 @@ function updateImageToRecognise(snippetObject: { snippet: HTMLCanvasElement }) {
 
 onBeforeUnmount(() => {
   if (anno.value) {
+    anno.value.off('createSelection', handleSelection)
+    anno.value.off('changeSelected', handleSelection)
+    anno.value.off('changeSelectionTarget', handleSelection)
     anno.value.destroy()
+    anno.value = null
   }
 })
 </script>
 
+
 <template>
   <div class="text-center antialiased text-bluegray-700 mt-10">
     <div class="grid grid-cols-2 gap-4">
-      <div class="ml-4 min-w-4/5">
-        <div class="gap-4 relative flex flex-col h-full justify-start">
-          <input
-            id="addFiles"
-            type="file"
-            accept="image/*"
-            multiple="false"
-            class="text-center justify-center w-3/4"
-            @change="handleImageChange"
-          >
-          <div>
-            <img v-if="sourceImage" id="text-img" alt="Vue logo" :src="sourceImage" class="h-full w-full" @mousedown.prevent="null">
-          </div>
-          <div>
-            <img v-if="imageToRecognise" alt="Vue logo" :src="imageToRecognise" class="" @mousedown.prevent="null">
-          </div>
-        </div>
+      <div>
+        <img v-if="imageSource" id="text-img" alt="Vue logo" :src="imageSource" class="h-full w-full" @mousedown.prevent="null">
+        <img v-if="imageToRecognise" alt="Vue logo" :src="imageToRecognise" class="" @mousedown.prevent="null">
+      </div>
+      <div>
+        <div
+          v-if="ocrText"
+          class="w-300"
+          v-html="ocrText"
+        />
       </div>
     </div>
   </div>
