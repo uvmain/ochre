@@ -5,6 +5,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y \
     python3-pip \
+    python3.11-venv \
     python3-opencv && \
     apt-get clean
 
