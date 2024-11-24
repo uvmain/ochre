@@ -3,6 +3,6 @@ services:
     image: ochre:latest
     container_name: ochre
     ports:
-      - "3000:3000"
+      - "3002:3000"
     env_file:
       - .env
