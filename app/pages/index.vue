@@ -72,16 +72,17 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="text-center antialiased text-bluegray-700 mt-10">
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <img v-if="imageSource" id="text-img" alt="Vue logo" :src="imageSource" class="h-full w-full" @mousedown.prevent="null">
-        <img v-if="imageToRecognise" alt="Vue logo" :src="imageToRecognise" class="" @mousedown.prevent="null">
+    <div class="grid grid-cols-2 gap-4 p-4">
+      <div class="w-full ml-auto flex flex-col gap-4">
+        <UCard>
+          <img v-if="imageSource" id="text-img" alt="Vue logo" :src="imageSource" class="h-full w-full" @mousedown.prevent="null">
+        </UCard>
       </div>
-      <div>
-        <div
-          v-if="ocrText"
-          class="w-300"
-          v-html="ocrText"
+      <div class="w-full mr-auto">
+        <UTextarea
+          v-model="ocrText"
+          :padded="true"
+          autoresize
         />
       </div>
     </div>

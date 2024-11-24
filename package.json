@@ -7,15 +7,15 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "start": "node .output/server/index.mjs",
     "lint": "eslint \"**/*.{vue,ts,js,json}\"",
     "lint:fix": "eslint \"**/*.{vue,ts,js,json}\" --fix",
     "cspell": "cspell \"**/*.{ts,js}\""
   },
   "devDependencies": {
     "@nuxt/eslint": "^0.5.7",
-    "@nuxt/icon": "^1.0.0",
+    "@nuxt/ui": "^2.19.2",
     "@nuxtjs/google-fonts": "^3.2.0",
-    "@unocss/nuxt": "^0.62.4",
     "cspell": "^8.8.3",
     "eslint": "^9.0.0",
     "nuxt": "^3.11.2",

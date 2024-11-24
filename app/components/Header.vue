@@ -3,9 +3,11 @@ const imageSource = useState('imageSource')
 const imageToRecognise = useState<string>('imageToRecognise')
 const ocrText = useState<string>('ocrText')
 
-function handleInput(event: Event) {
-  const input = event.target as HTMLInputElement
-  const file = input && input.files ? input.files[0] : undefined
+const isLoading = ref(false)
+const selectedFile = ref()
+
+function handleInput(files: FileList) {
+  const file = files[0]
   const reader = new FileReader()
 
   reader.addEventListener(
@@ -22,6 +24,7 @@ function handleInput(event: Event) {
 }
 
 async function getOcrText() {
+  isLoading.value = true
   const base64DataUrl = imageToRecognise.value
   if (!base64DataUrl) return
 
@@ -43,34 +46,44 @@ async function getOcrText() {
       body: formData,
     })
     console.log(await JSON.stringify(res))
-    ocrText.value = res.text.replace(/\r\n/g, '<br/>')
+    ocrText.value = res.text
   }
   catch (error) {
     console.error(error)
   }
+  finally {
+    isLoading.value = false
+  }
 }
+
+const colorMode = useColorMode()
+const isDark = computed({
+  get () {
+    return colorMode.value === 'dark'
+  },
+  set () {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+  }
+})
 
 </script>
 
 <template>
-  <div class="flex w-full justify-center bg-gray-100">
+  <div class="flex w-full justify-center">
     <header class="flex justify-center flex-wrap m-4">
       <div class="flex flex-row gap-2">
-        <input
-          id="addFiles"
-          type="file"
-          accept="image/*"
-          multiple="false"
-          class="text-center justify-center w-3/4"
-          @change="handleInput"
-        >
-        <button
-          type="button"
-          class="text-white text-xl bg-blue-gray-500 rounded-lg text-center font-medium md:text-3xl px-5 py-2.5 me-2 mb-2"
-          @click="getOcrText"
-        >
+        <UInput id="addFiles" v-model="selectedFile" type="file" size="lg" icon="i-heroicons-folder" accept="image/*" multiple="false" @change="handleInput"/>
+        <UButton icon="i-heroicons-document-text" size="lg" :loading="isLoading" :disabled="!imageToRecognise" @click="getOcrText">
           OCR
-        </button>
+        </UButton>
+        <div />
+        <UButton
+          :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
+          
+          aria-label="Theme"
+          size="lg"
+          @click="isDark = !isDark"
+        />
       </div>
     </header>
   </div>

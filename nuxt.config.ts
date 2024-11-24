@@ -5,11 +5,10 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-23',
   devtools: { enabled: true },
   modules: [
-    "@unocss/nuxt",
     '@nuxt/eslint',
     "@nuxtjs/google-fonts",
     "nuxt-auth-utils",
-    "@nuxt/icon"
+    "@nuxt/ui"
   ],
   devServer: {
     port: 3000,
