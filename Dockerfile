@@ -12,8 +12,13 @@ COPY package.json package-lock.json ./
 
 RUN npm install
 
+RUN python3 -m venv /opt/venv
+
 COPY requirements.txt ./
-RUN pip3 install -r requirements.txt
+
+RUN . /opt/venv/bin/activate && pip install --no-cache-dir -r requirements.txt
+
+ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . .
 
