@@ -1,1 +1,1 @@
-git pull && docker build -t uvite:latest . && docker compose up -d
+git pull && docker build -t ochre:latest . && docker compose up -d
