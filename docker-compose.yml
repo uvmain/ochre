@@ -1,8 +1,8 @@
 services:
   recipebook:
-    image: ochre:latest
-    container_name: ochre
+    image: uvite:latest
+    container_name: uvite
     ports:
-      - "3002:3000"
+      - "3000:3000"
     env_file:
       - .env

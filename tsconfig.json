@@ -1,7 +1,33 @@
 {
-  // https://v3.nuxtjs.org/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "strict": true
-  }
+    "composite": true,
+    "target": "es2022",
+    "lib": ["es2023", "DOM"],
+    "baseUrl": ".",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "paths": {
+      "~/*": ["src/*"]
+    },
+    "types": [
+      "node",
+      "vite/client",
+      "vite-plugin-pages/client"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "vite.config.*",
+    "uno.config.ts",
+    "src/**/*",
+    "types.d.ts",
+    "auto-imports.d.ts"
+  ],
+  "ts-node": {
+    "files": true
+  },
+  "exclude": ["node_modules", "dist", "eslint.config.js"]
 }

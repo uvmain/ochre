@@ -1,18 +1,17 @@
-import withNuxt from './.nuxt/eslint.config.mjs'
+import antfu from '@antfu/eslint-config'
 
-export default withNuxt(
-  {
-    ignores: ['node_modules', 'dist', '**/dist/**', 'public', '**/public/**'],
-    files: ['**/*.{vue,ts,js}'],
-    rules: {
-      'no-console': 'off',
-      'brace-style': ['error', 'stroustrup'],
-      'curly': ['off'],
-      'vue/multi-word-component-names': 'off',
-      'vue/no-v-html': 'off',
-      'vue/require-default-prop': 'off'
-    }
+export default antfu({
+  vue: true,
+  unocss: true,
+  typescript: {
+    tsconfigPath: 'tsconfig.json',
   },
-)
-
-
+  ignores: ['dist', '**/dist/**'],
+}, {
+  files: ['**/*.{vue,ts,js,json}'],
+  rules: {
+    'no-console': 'off',
+    'brace-style': ['error', 'stroustrup'],
+    'curly': ['off'],
+  },
+})

@@ -1,8 +1,7 @@
 {
   "version": "0.2",
   "ignorePaths": [
-    ".output/**",
-    ".nuxt**",
+    "./dist/**",
     "node_modules"
   ],
   "dictionaryDefinitions": [],
@@ -13,17 +12,16 @@
   "words": [
     "Annotorious",
     "antfu",
+    "Attributify",
     "iconify",
-    "icontains",
-    "lucide",
-    "Montserrat",
-    "nuxt",
-    "nuxtjs",
+    "pinia",
+    "primevue",
     "recogito",
     "stroustrup",
     "tabler",
-    "unsign",
-    "vueuse"
+    "Unfonts",
+    "unplugin",
+    "uvite"
   ],
   "ignoreWords": [],
   "import": []

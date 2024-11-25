@@ -1,58 +1,49 @@
-# Nuxt 3 Minimal Starter
-
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+# uvite Vue3/Vite starter
 
 ## Features
 
 - 🎨 Utility CSS styling with [UnoCSS](https://unocss.dev/)
-- 🅰️ Use any Google font with [Nuxt Google Fonts](https://nuxt.com/modules/google-fonts)
-- 📸 >200k Ready to use icons with [NuxtIcon](https://nuxt.com/modules/icon)
-- 🔑 Minimalist Authentication with [Nuxt Auth Utils](https://nuxt.com/modules/auth-utils)
-- 🧹 [ESLint](https://nuxt.com/modules/eslint)
+- 🅰️ Use any Google font with [unplugin-fonts](https://github.com/cssninjaStudio/unplugin-fonts) - Default is Poppins
+- 📸 >200k Ready to use icons with [unplugin-icons](https://github.com/unplugin/unplugin-icons)
+- ⏩ Auto imports with [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import)
+- 🎨 UI Component suite from [PrimeVue](https://primevue.org/vite/)
+- 🧹 [ESLint](https://github.com/eslint/eslint)
 - ✏️ [CSpell](https://cspell.org/)
 - 📀 Docker configuration
 
-## Setup
+## Recommended IDE Setup
 
-Make sure to install the dependencies:
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [UnoCSS](https://marketplace.visualstudio.com/items?itemName=antfu.unocss)
 
-```bash
-# yarn
-yarn install
+## Project Setup
 
-# npm
+```sh
 npm install
-
-# pnpm
-pnpm install
 ```
 
-Copy the `.env.example` file to `.env` and fill in the values.
+### Compile and Hot-Reload for Development
 
-```bash
-cp .env.example .env
-```
-
-## Development Server
-
-Start the development server on http://localhost:3000
-
-```bash
+```sh
 npm run dev
 ```
 
-## Production
+### Type-Check, Compile and Minify for Production
 
-Build the application for production:
-
-```bash
+```sh
 npm run build
 ```
 
-Locally preview production build:
+### Lint with [ESLint](https://eslint.org/)
 
-```bash
-npm run preview
+```sh
+npm run lint
+```
+```sh
+npm run lint:fix
 ```
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/docs/deployment) for more information.
+### Check spelling with [Cspell](https://cspell.org/)
+
+```sh
+npm run cspell
+```
