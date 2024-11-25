@@ -1,5 +1,4 @@
 import path from 'node:path'
-import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import express from 'express'
 
@@ -14,6 +13,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/index.html'))
 })
 
-app.listen(process.env.PORT, () => {
-  console.log(`Static server started and listening on port ${process.env.PORT}`)
+app.listen(3000, () => {
+  console.log('Static server started and listening on port 3000')
 })
