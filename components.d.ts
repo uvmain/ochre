@@ -10,7 +10,9 @@ declare module 'vue' {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     'IconTabler:copy': typeof import('~icons/tabler/copy')['default']
     'IconTabler:minus': typeof import('~icons/tabler/minus')['default']
+    'IconTabler:moon': typeof import('~icons/tabler/moon')['default']
     'IconTabler:plus': typeof import('~icons/tabler/plus')['default']
+    'IconTabler:sun': typeof import('~icons/tabler/sun')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

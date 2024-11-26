@@ -14,13 +14,15 @@
     "antfu",
     "Attributify",
     "iconify",
+    "pageseg",
     "pinia",
     "primevue",
     "recogito",
     "stroustrup",
     "tabler",
     "Unfonts",
-    "unplugin"
+    "unplugin",
+    "vueuse"
   ],
   "ignoreWords": [],
   "import": []

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDark, useToggle } from '@vueuse/core'
 import { createWorker, OEM, PSM } from 'tesseract.js'
 import '@recogito/annotorious/dist/annotorious.min.css'
 
@@ -8,6 +9,12 @@ const tesseractWorker = ref()
 const ocrText = ref<string>()
 const textSize = ref<number>(3)
 const loading = ref(false)
+
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
+function handleToggleDark() {
+  toggleDark()
+}
 
 const canOcr = computed<boolean>(() => {
   return !!((loading.value === false && imageToRecognise.value))
@@ -167,51 +174,59 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <div class="">
-    <div class="mx-auto flex flex-row items-center justify-center gap-6 p-4">
+  <div class="flex flex-col gap-6 pt-4">
+    <div class="mx-auto flex flex-row items-center justify-center gap-6">
       <label>
         <input
           id="addFiles"
           type="file"
           accept="image/*"
           multiple="false"
-          class="text-lg text-gray-600 file:mr-5 file:border-1 file:border-gray-400 file:rounded-lg file:border-solid file:bg-gray-100 file:px-4 file:py-2 file:text-lg file:text-gray-600 file:font-bold hover:file:cursor-pointer hover:file:border-blue-500 hover:file:bg-gray-200"
+          class="text-lg file:mr-5 file:h-11 file:border-1 file:border-gray-400 file:rounded-lg file:border-solid file:bg-gray-100 file:px-4 file:py-2 file:text-lg dark:text-white file:text-gray-600 file:font-bold hover:file:cursor-pointer hover:file:border-blue-500 dark:file:bg-gray-700 hover:file:bg-gray-200 dark:file:text-white"
           @change="handleInput"
         >
       </label>
       <button
         type="button"
         :disabled="!canOcr"
-        class="border-1 border-gray-400 rounded-lg border-solid bg-gray-100 px-4 py-2 text-lg text-gray-600 font-bold hover:border-blue-500 hover:bg-gray-200"
+        class="headerButton"
         @click="getOcrText"
       >
         OCR
+      </button>
+      <button
+        type="button"
+        class="size-11 flex items-center justify-center border-1 border-gray-400 rounded-lg border-solid bg-gray-100 text-lg text-gray-600 font-bold hover:border-blue-500 dark:bg-gray-700 hover:bg-gray-200"
+        @click="handleToggleDark"
+      >
+        <icon-tabler:sun v-if="isDark" class="text-white" />
+        <icon-tabler:moon v-else class="text-gray-700" />
       </button>
     </div>
     <div class="grid grid-cols-2 gap-4">
       <div v-if="imageSource" class="ml-auto border-1 border-gray-400 rounded-lg border-solid p-2 lg:w-2/3">
         <img id="text-img" :src="imageSource" class="h-full w-full" @mousedown.prevent="null">
       </div>
-      <div v-if="ocrText" class="mr-auto flex flex-row gap-2 lg:w-2/3">
-        <textarea v-model="ocrText" class="grow border-1 border-gray-400 rounded-lg border-solid p-2 text-gray-700" :class="textSizeClass" />
+      <div v-if="ocrText" class="mr-auto flex flex-row gap-2 bg-gray-100 text-gray-700 lg:w-2/3 dark:bg-gray-700 dark:text-white">
+        <textarea v-model="ocrText" class="grow resize-none border-1 border-gray-400 rounded-lg border-solid bg-transparent p-2 text-gray-700 dark:text-white" :class="textSizeClass" />
         <div class="flex flex-col gap-2">
           <button
             type="button"
-            class="size-10 flex items-center justify-center border-1 border-gray-400 rounded-lg border-solid bg-gray-100 text-lg text-gray-600 font-bold hover:border-blue-500 hover:bg-gray-200"
+            class="smallButton"
             @click="updateTextSize(1)"
           >
             <icon-tabler:plus />
           </button>
           <button
             type="button"
-            class="size-10 flex items-center justify-center border-1 border-gray-400 rounded-lg border-solid bg-gray-100 text-lg text-gray-600 font-bold hover:border-blue-500 hover:bg-gray-200"
+            class="smallButton"
             @click="updateTextSize(-1)"
           >
             <icon-tabler:minus />
           </button>
           <button
             type="button"
-            class="size-10 flex items-center justify-center border-1 border-gray-400 rounded-lg border-solid bg-gray-100 text-lg text-gray-600 font-bold hover:border-blue-500 hover:bg-gray-200"
+            class="smallButton"
             @click="copyToClipboard"
           >
             <icon-tabler:copy />
