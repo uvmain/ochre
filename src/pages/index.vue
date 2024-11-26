@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { SpellCheckResponse } from '../logic/spelling'
 import { useDark, useToggle } from '@vueuse/core'
 import { createWorker, OEM, PSM } from 'tesseract.js'
+import { checkSpelling } from '../logic/spelling'
 import '@recogito/annotorious/dist/annotorious.min.css'
 
 const imageSource = ref()
@@ -9,12 +11,63 @@ const tesseractWorker = ref()
 const ocrText = ref<string>()
 const textSize = ref<number>(3)
 const loading = ref(false)
+const useSpellCheck = ref(false)
+const useBulletPoints = ref(false)
+const useMarkdownList = ref(false)
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 function handleToggleDark() {
   toggleDark()
 }
+
+function toggleUseSpellCheck() {
+  useSpellCheck.value = !useSpellCheck.value
+}
+
+function toggleUseBulletPoints() {
+  useBulletPoints.value = !useBulletPoints.value
+}
+
+function toggleUseMarkdownList() {
+  useMarkdownList.value = !useMarkdownList.value
+}
+
+const modifiedText = computed(() => {
+  if (!ocrText.value) {
+    return undefined
+  }
+
+  let returnText = ocrText.value
+
+  if (useSpellCheck.value) {
+    const corrections = spellCheck(returnText)
+    corrections.forEach((correction) => {
+      if (correction.recommendations.length > 0 && returnText.includes(correction.word)) {
+        returnText = returnText.replaceAll(correction.word, correction.recommendations[0])
+      }
+    })
+  }
+
+  if (useBulletPoints.value) {
+    const list: string[] = []
+    const sentences = returnText.split('\n')
+    sentences.forEach((sentence) => {
+      list.push(sentence.length > 0 ? `• ${sentence}` : sentence)
+    })
+    returnText = list.join('\n')
+  }
+
+  if (useMarkdownList.value) {
+    const list: string[] = []
+    const sentences = returnText.split('\n')
+    sentences.forEach((sentence) => {
+      list.push(sentence.length > 0 ? `- ${sentence}` : sentence)
+    })
+    returnText = list.join('\n')
+  }
+  return returnText
+})
 
 const canOcr = computed<boolean>(() => {
   return !!((loading.value === false && imageToRecognise.value))
@@ -72,13 +125,23 @@ async function initializeAnnotorious() {
     anno.value.on('createSelection', handleSelection)
     anno.value.on('changeSelected', handleSelection)
     anno.value.on('changeSelectionTarget', handleSelection)
+    anno.value.on('cancelSelected', handleSelection)
+    anno.value.on('deleteAnnotation', handleSelection)
+    anno.value.on('updateAnnotation', handleSelection)
   }
+
+  imageToRecognise.value = imageSource.value
 }
 
 async function handleSelection(annotation: { id: string | number }) {
   const id = annotation.id
   const snippetObject: { snippet: HTMLCanvasElement } = await anno.value.getImageSnippetById(id)
-  updateImageToRecognise(snippetObject)
+  if (snippetObject) {
+    updateImageToRecognise(snippetObject)
+  }
+  else if (imageSource.value) {
+    imageToRecognise.value = imageSource.value
+  }
 }
 
 function updateImageToRecognise(snippetObject: { snippet: HTMLCanvasElement }) {
@@ -106,7 +169,6 @@ async function getOcrText() {
         tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
       })
       const ret = await tesseractWorker.value.recognize(imageToRecognise.value)
-      console.log(JSON.stringify(ret.data))
       ocrText.value = ret.data.text
     }
     else {
@@ -159,6 +221,19 @@ function copyToClipboard() {
   }
 }
 
+function spellCheck(words: string) {
+  const checkedWords: SpellCheckResponse[] = []
+  const wordArray = words.split(/[\n ]+/)
+  const uniqueWords = [...new Set(wordArray.filter((word: string) => word.length > 4))]
+  for (const word of uniqueWords) {
+    const result = checkSpelling(word)
+    checkedWords.push(result)
+  }
+  return checkedWords.filter((word: SpellCheckResponse) => {
+    return word.correct === false
+  })
+}
+
 onBeforeUnmount(async () => {
   if (anno.value) {
     anno.value.off('createSelection', handleSelection)
@@ -207,8 +282,8 @@ onBeforeUnmount(async () => {
       <div v-if="imageSource" class="ml-auto border-1 border-gray-400 rounded-lg border-solid p-2 lg:w-2/3">
         <img id="text-img" :src="imageSource" class="h-full w-full" @mousedown.prevent="null">
       </div>
-      <div v-if="ocrText" class="mr-auto flex flex-row gap-2 bg-gray-100 text-gray-700 lg:w-2/3 dark:bg-gray-700 dark:text-white">
-        <textarea v-model="ocrText" class="grow resize-none border-1 border-gray-400 rounded-lg border-solid bg-transparent p-2 text-gray-700 dark:text-white" :class="textSizeClass" />
+      <div v-if="modifiedText" class="mr-auto flex flex-row gap-2 bg-gray-100 text-gray-700 lg:w-2/3 dark:bg-gray-700 dark:text-white">
+        <textarea v-model="modifiedText" class="grow resize-none border-1 border-gray-400 rounded-lg border-solid bg-transparent p-2 text-gray-700 dark:text-white" :class="textSizeClass" />
         <div class="flex flex-col gap-2">
           <button
             type="button"
@@ -230,6 +305,28 @@ onBeforeUnmount(async () => {
             @click="copyToClipboard"
           >
             <icon-tabler:copy />
+          </button>
+          <br>
+          <button
+            type="button"
+            class="smallButton"
+            @click="toggleUseSpellCheck"
+          >
+            <icon-tabler:text-spellcheck :class="{ 'text-green-600': useSpellCheck }" />
+          </button>
+          <button
+            type="button"
+            class="smallButton"
+            @click="toggleUseBulletPoints"
+          >
+            <icon-tabler:list :class="{ 'text-green-600': useBulletPoints }" />
+          </button>
+          <button
+            type="button"
+            class="smallButton"
+            @click="toggleUseMarkdownList"
+          >
+            <icon-tabler:markdown :class="{ 'text-green-600': useMarkdownList }" />
           </button>
         </div>
       </div>
