@@ -6,6 +6,7 @@ const imageSource = ref()
 const imageToRecognise = ref()
 const tesseractWorker = ref()
 const ocrText = ref<string>()
+const textSize = ref<number>(3)
 const loading = ref(false)
 
 const canOcr = computed<boolean>(() => {
@@ -113,6 +114,44 @@ async function getOcrText() {
   }
 }
 
+function updateTextSize(value: number) {
+  if (value > 0 && textSize.value < 7) {
+    textSize.value += 1
+  }
+  else if (value < 0 && textSize.value > 0) {
+    textSize.value -= 1
+  }
+}
+
+const textSizeClass = computed(() => {
+  switch (textSize.value) {
+    case 0:
+      return 'text-xs'
+    case 1:
+      return 'text-sm'
+    case 2:
+      return 'text-base'
+    case 3:
+      return 'text-lg'
+    case 4:
+      return 'text-xl'
+    case 5:
+      return 'text-2xl'
+    case 6:
+      return 'text-3xl'
+    case 7:
+      return 'text-4xl'
+    default:
+      return 'text-lg'
+  }
+})
+
+function copyToClipboard() {
+  if (ocrText.value) {
+    navigator.clipboard.writeText(ocrText.value)
+  }
+}
+
 onBeforeUnmount(async () => {
   if (anno.value) {
     anno.value.off('createSelection', handleSelection)
@@ -128,30 +167,57 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <div>
-    <div class="flex flex-row justify-center gap-2">
-      <input
-        id="addFiles"
-        type="file"
-        accept="image/*"
-        multiple="false"
-        class="w-3/4 justify-center text-center"
-        @change="handleInput"
-      >
+  <div class="">
+    <div class="mx-auto flex flex-row items-center justify-center gap-6 p-4">
+      <label>
+        <input
+          id="addFiles"
+          type="file"
+          accept="image/*"
+          multiple="false"
+          class="text-lg text-gray-600 file:mr-5 file:border-1 file:border-gray-400 file:rounded-lg file:border-solid file:bg-gray-100 file:px-4 file:py-2 file:text-lg file:text-gray-600 file:font-bold hover:file:cursor-pointer hover:file:border-blue-500 hover:file:bg-gray-200"
+          @change="handleInput"
+        >
+      </label>
       <button
         type="button"
         :disabled="!canOcr"
-        class="mb-2 me-2 rounded-lg bg-blue-gray-500 px-5 py-2.5 text-center text-xl text-white font-medium md:text-3xl"
+        class="border-1 border-gray-400 rounded-lg border-solid bg-gray-100 px-4 py-2 text-lg text-gray-600 font-bold hover:border-blue-500 hover:bg-gray-200"
         @click="getOcrText"
       >
         OCR
       </button>
     </div>
-    <div class="mt-10 flex flex-row gap-4 text-bluegray-700">
-      <div class="max-w-1/2 flex flex-col gap-4">
-        <img v-if="imageSource" id="text-img" :src="imageSource" class="h-full w-full" @mousedown.prevent="null">
+    <div class="grid grid-cols-2 gap-4">
+      <div v-if="imageSource" class="ml-auto border-1 border-gray-400 rounded-lg border-solid p-2 lg:w-2/3">
+        <img id="text-img" :src="imageSource" class="h-full w-full" @mousedown.prevent="null">
       </div>
-      <textarea id="story" v-model="ocrText" name="story" />
+      <div v-if="ocrText" class="mr-auto flex flex-row gap-2 lg:w-2/3">
+        <textarea v-model="ocrText" class="grow border-1 border-gray-400 rounded-lg border-solid p-2 text-gray-700" :class="textSizeClass" />
+        <div class="flex flex-col gap-2">
+          <button
+            type="button"
+            class="size-10 flex items-center justify-center border-1 border-gray-400 rounded-lg border-solid bg-gray-100 text-lg text-gray-600 font-bold hover:border-blue-500 hover:bg-gray-200"
+            @click="updateTextSize(1)"
+          >
+            <icon-tabler:plus />
+          </button>
+          <button
+            type="button"
+            class="size-10 flex items-center justify-center border-1 border-gray-400 rounded-lg border-solid bg-gray-100 text-lg text-gray-600 font-bold hover:border-blue-500 hover:bg-gray-200"
+            @click="updateTextSize(-1)"
+          >
+            <icon-tabler:minus />
+          </button>
+          <button
+            type="button"
+            class="size-10 flex items-center justify-center border-1 border-gray-400 rounded-lg border-solid bg-gray-100 text-lg text-gray-600 font-bold hover:border-blue-500 hover:bg-gray-200"
+            @click="copyToClipboard"
+          >
+            <icon-tabler:copy />
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
