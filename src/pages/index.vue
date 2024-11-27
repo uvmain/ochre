@@ -2,6 +2,7 @@
 import type { SpellCheckResponse } from '../logic/spelling'
 import { useDark, useToggle } from '@vueuse/core'
 import { createWorker, OEM, PSM } from 'tesseract.js'
+import { titleCasePhrase } from '../logic/capitalization'
 import { checkSpelling } from '../logic/spelling'
 import '@recogito/annotorious/dist/annotorious.min.css'
 
@@ -14,6 +15,7 @@ const loading = ref(false)
 const useSpellCheck = ref(false)
 const useBulletPoints = ref(false)
 const useMarkdownList = ref(false)
+const useTitleCase = ref(false)
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
@@ -31,6 +33,10 @@ function toggleUseBulletPoints() {
 
 function toggleUseMarkdownList() {
   useMarkdownList.value = !useMarkdownList.value
+}
+
+function toggleUseTitleCase() {
+  useTitleCase.value = !useTitleCase.value
 }
 
 const modifiedText = computed(() => {
@@ -66,6 +72,11 @@ const modifiedText = computed(() => {
     })
     returnText = list.join('\n')
   }
+
+  if (useTitleCase.value) {
+    returnText = titleCasePhrase(returnText)
+  }
+
   return returnText
 })
 
@@ -327,6 +338,13 @@ onBeforeUnmount(async () => {
             @click="toggleUseMarkdownList"
           >
             <icon-tabler:markdown :class="{ 'text-green-600': useMarkdownList }" />
+          </button>
+          <button
+            type="button"
+            class="smallButton"
+            @click="toggleUseTitleCase"
+          >
+            <icon-tabler:letter-case :class="{ 'text-green-600': useTitleCase }" />
           </button>
         </div>
       </div>

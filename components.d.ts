@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     'IconTabler:copy': typeof import('~icons/tabler/copy')['default']
+    'IconTabler:letterCase': typeof import('~icons/tabler/letter-case')['default']
     'IconTabler:list': typeof import('~icons/tabler/list')['default']
     'IconTabler:markdown': typeof import('~icons/tabler/markdown')['default']
     'IconTabler:minus': typeof import('~icons/tabler/minus')['default']
