@@ -257,7 +257,7 @@ onBeforeUnmount(async () => {
           type="file"
           accept="image/*"
           multiple="false"
-          class="text-lg file:mr-5 file:h-11 file:border-1 file:border-gray-400 file:rounded-lg file:border-solid file:bg-gray-100 file:px-4 file:py-2 file:text-lg dark:text-white file:text-gray-600 file:font-bold hover:file:cursor-pointer hover:file:border-blue-500 dark:file:bg-gray-700 hover:file:bg-gray-200 dark:file:text-white"
+          class="text-lg file:mr-5 file:h-11 file:border-1 file:border-gray-400 file:rounded-lg file:border-solid file:bg-gray-100 file:px-4 file:py-2 file:text-lg dark:text-white file:text-gray-600 file:font-bold hover:file:cursor-pointer hover:file:border-blue-500 dark:file:bg-gray-700 hover:file:bg-gray-200 dark:file:text-white dark:file:hover:bg-gray-600"
           @change="handleInput"
         >
       </label>
@@ -271,7 +271,7 @@ onBeforeUnmount(async () => {
       </button>
       <button
         type="button"
-        class="size-11 flex items-center justify-center border-1 border-gray-400 rounded-lg border-solid bg-gray-100 text-lg text-gray-600 font-bold hover:border-blue-500 dark:bg-gray-700 hover:bg-gray-200"
+        class="size-11 flex items-center justify-center border-1 border-gray-400 rounded-lg border-solid bg-gray-100 text-lg text-gray-600 font-bold hover:border-blue-500 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
         @click="handleToggleDark"
       >
         <icon-tabler:sun v-if="isDark" class="text-white" />
